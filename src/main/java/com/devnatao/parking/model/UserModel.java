@@ -2,6 +2,7 @@ package com.devnatao.parking.model;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -12,6 +13,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -26,10 +30,17 @@ public class UserModel implements UserDetails, Serializable {
 	private String username;
 	@Column(nullable = false)
 	private String password;
+
+	// ManyToMany relationship between User and Roles
+	@ManyToMany
+	@JoinTable(name = "TB_USER_ROLES", // table that represent the relation between User and Roles
+			joinColumns = @JoinColumn(name = "user_id"), // will join in User by user_id column
+			inverseJoinColumns = @JoinColumn(name  = "role_id")) // will join in Roles by role_id column
+	private List<RoleModel> roles;
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		return this.roles;
 	}
 
 	@Override
